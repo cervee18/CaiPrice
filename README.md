@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CaiPrice
 
-## Getting Started
+Los mejores precios de tu isla, entre todos. / Your island's best prices, crowdsourced.
 
-First, run the development server:
+A community price tracker for local supermarkets: anyone can add products and supermarkets, report the prices they see, and check where each product is currently cheapest.
+
+## Features
+
+- 🛒 Product list with best current price and where to find it
+- 🏪 Supermarket directory with "cheapest for N products" stats
+- 📈 Full price history per product and supermarket, with offer flags
+- ⚖️ Normalized unit prices (KYD/kg, KYD/l) for fair comparison across pack sizes
+- 🌍 Spanish + English UI (`/es`, `/en`)
+- 👥 Crowdsourced: all price reports are shared; sign in to contribute, browse without an account
+
+## Stack
+
+Next.js 16 (App Router) · Tailwind CSS v4 · Supabase (Postgres, Auth, RLS) · next-intl
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+supabase start   # local Supabase on ports 55321-55329
+npm run dev      # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`.env.local` is preconfigured for the local Supabase instance. For a hosted project, copy `.env.example` and fill in your project's URL and anon key.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Seed data (a few supermarkets, products, and prices) lives in `supabase/seed.sql`.
