@@ -4,7 +4,10 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/utils/supabase/client";
 import { CATEGORIES, SIZE_UNITS } from "@/lib/constants";
+import { productPhotoUrl } from "@/lib/format";
+import { deleteProductPhoto, uploadProductPhoto } from "@/lib/storage";
 import type { Product } from "@/lib/types";
+import PhotoPicker from "./PhotoPicker";
 
 export default function EditProductModal({
   product,
@@ -20,6 +23,8 @@ export default function EditProductModal({
   const tUnits = useTranslations("units");
   const tCommon = useTranslations("common");
 
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoRemoved, setPhotoRemoved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,8 +35,27 @@ export default function EditProductModal({
 
     const form = new FormData(e.currentTarget);
     const sizeValue = form.get("size_value") as string;
-
     const supabase = createClient();
+
+    let photoPath = product.photo_path;
+    if (photoFile) {
+      try {
+        photoPath = await uploadProductPhoto(supabase, photoFile);
+      } catch {
+        setError(tCommon("error"));
+        setSaving(false);
+        return;
+      }
+      if (product.photo_path) {
+        await deleteProductPhoto(supabase, product.photo_path);
+      }
+    } else if (photoRemoved) {
+      if (product.photo_path) {
+        await deleteProductPhoto(supabase, product.photo_path);
+      }
+      photoPath = null;
+    }
+
     const { data, error: updateError } = await supabase
       .from("products")
       .update({
@@ -40,6 +64,7 @@ export default function EditProductModal({
         category: form.get("category") as string,
         size_value: sizeValue ? Number(sizeValue) : null,
         size_unit: form.get("size_unit") as string,
+        photo_path: photoPath,
       })
       .eq("id", product.id)
       .select()
@@ -135,6 +160,14 @@ export default function EditProductModal({
             </div>
           </div>
           <p className="text-xs text-slate-400">{t("sizeHint")}</p>
+
+          <PhotoPicker
+            initialUrl={productPhotoUrl(product.photo_path)}
+            onChange={(file, removed) => {
+              setPhotoFile(file);
+              setPhotoRemoved(removed);
+            }}
+          />
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 

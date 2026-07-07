@@ -5,9 +5,10 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { CATEGORIES } from "@/lib/constants";
-import { formatPrice, formatSize, isMeasuredUnit } from "@/lib/format";
+import { formatPrice, formatSize, isMeasuredUnit, productPhotoUrl } from "@/lib/format";
 import type { Product, ProductOverview } from "@/lib/types";
 import AddProductModal from "./AddProductModal";
+import CameraIcon from "./CameraIcon";
 import EditProductModal from "./EditProductModal";
 
 export default function HomeClient({
@@ -140,53 +141,68 @@ export default function HomeClient({
               <li key={p.id} className="group relative">
                 <Link
                   href={`/products/${p.id}`}
-                  className="block rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-teal-300"
+                  className="flex gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-teal-300"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="truncate font-medium text-slate-800">
-                        {p.name}
-                      </p>
-                      <p className="mt-0.5 text-xs text-slate-500">
-                        {[p.brand, size].filter(Boolean).join(" · ") || " "}
-                      </p>
+                  {productPhotoUrl(p.photo_path) ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={productPhotoUrl(p.photo_path)!}
+                      alt=""
+                      className="h-14 w-14 shrink-0 rounded-lg border border-slate-100 object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-300">
+                      <CameraIcon className="h-6 w-6" />
                     </div>
-                    <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-500">
-                      {tCat(p.category)}
-                    </span>
-                  </div>
+                  )}
 
-                  <div className="mt-3 flex items-end justify-between">
-                    {p.best_price != null ? (
-                      <div>
-                        <p className="text-lg font-bold text-teal-700">
-                          {formatPrice(p.best_price, locale)}
-                          {isMeasuredUnit(p.size_unit) && p.size_value == null && (
-                            <span className="text-sm font-normal text-teal-700/70">
-                              /{tUnits(p.size_unit)}
-                            </span>
-                          )}
-                          {p.best_price_is_offer && (
-                            <span className="ml-1.5 rounded bg-amber-50 px-1.5 py-0.5 align-middle text-[11px] font-medium text-amber-600">
-                              {tProduct("offer")}
-                            </span>
-                          )}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-slate-800">
+                          {p.name}
                         </p>
-                        <p className="text-xs text-slate-500">
-                          {t("bestPriceAt")}{" "}
-                          <span className="font-medium text-slate-600">
-                            {p.best_supermarket_name}
-                          </span>
+                        <p className="mt-0.5 text-xs text-slate-500">
+                          {[p.brand, size].filter(Boolean).join(" · ") || " "}
                         </p>
                       </div>
-                    ) : (
-                      <p className="text-sm text-slate-400">{t("noPrices")}</p>
-                    )}
-                    {p.store_count > 0 && (
-                      <span className="text-xs text-slate-400">
-                        {t("storeCount", { count: p.store_count })}
+                      <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-500">
+                        {tCat(p.category)}
                       </span>
-                    )}
+                    </div>
+
+                    <div className="mt-3 flex items-end justify-between">
+                      {p.best_price != null ? (
+                        <div>
+                          <p className="text-lg font-bold text-teal-700">
+                            {formatPrice(p.best_price, locale)}
+                            {isMeasuredUnit(p.size_unit) && p.size_value == null && (
+                              <span className="text-sm font-normal text-teal-700/70">
+                                /{tUnits(p.size_unit)}
+                              </span>
+                            )}
+                            {p.best_price_is_offer && (
+                              <span className="ml-1.5 rounded bg-amber-50 px-1.5 py-0.5 align-middle text-[11px] font-medium text-amber-600">
+                                {tProduct("offer")}
+                              </span>
+                            )}
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            {t("bestPriceAt")}{" "}
+                            <span className="font-medium text-slate-600">
+                              {p.best_supermarket_name}
+                            </span>
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-sm text-slate-400">{t("noPrices")}</p>
+                      )}
+                      {p.store_count > 0 && (
+                        <span className="text-xs text-slate-400">
+                          {t("storeCount", { count: p.store_count })}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </Link>
 

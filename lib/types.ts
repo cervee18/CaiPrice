@@ -26,6 +26,7 @@ export interface Product {
   size_value: number | null;
   size_unit: SizeUnit | null;
   barcode: string | null;
+  photo_path: string | null;
   created_at: string;
 }
 

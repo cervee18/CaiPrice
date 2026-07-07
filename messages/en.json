@@ -42,6 +42,8 @@
     "sizePlaceholder": "1",
     "unit": "Unit",
     "sizeHint": "Leave size blank for variable-weight products (e.g. grapes priced KYD/lb).",
+    "photo": "Photo (optional)",
+    "addPhoto": "Add photo",
     "submit": "Create product",
     "saveChanges": "Save changes",
     "duplicateHint": "Already exists? Tap one to go there instead of creating another:",

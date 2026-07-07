@@ -6,7 +6,9 @@ import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { CATEGORIES, SIZE_UNITS } from "@/lib/constants";
 import { formatSize } from "@/lib/format";
+import { uploadProductPhoto } from "@/lib/storage";
 import type { Product } from "@/lib/types";
+import PhotoPicker from "./PhotoPicker";
 
 export default function AddProductModal({
   userId,
@@ -25,6 +27,7 @@ export default function AddProductModal({
   const [matches, setMatches] = useState<Product[]>([]);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,8 +67,19 @@ export default function AddProductModal({
 
     const form = new FormData(e.currentTarget);
     const sizeValue = form.get("size_value") as string;
-
     const supabase = createClient();
+
+    let photoPath: string | null = null;
+    if (photoFile) {
+      try {
+        photoPath = await uploadProductPhoto(supabase, photoFile);
+      } catch {
+        setError(tCommon("error"));
+        setSaving(false);
+        return;
+      }
+    }
+
     const { data, error: insertError } = await supabase
       .from("products")
       .insert({
@@ -74,6 +88,7 @@ export default function AddProductModal({
         category: form.get("category") as string,
         size_value: sizeValue ? Number(sizeValue) : null,
         size_unit: form.get("size_unit") as string,
+        photo_path: photoPath,
         created_by: userId,
       })
       .select()
@@ -199,6 +214,11 @@ export default function AddProductModal({
             </div>
           </div>
           <p className="text-xs text-slate-400">{t("sizeHint")}</p>
+
+          <PhotoPicker
+            initialUrl={null}
+            onChange={(file) => setPhotoFile(file)}
+          />
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 

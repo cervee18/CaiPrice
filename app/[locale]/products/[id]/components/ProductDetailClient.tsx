@@ -9,12 +9,14 @@ import {
   formatPrice,
   formatSize,
   isMeasuredUnit,
+  productPhotoUrl,
   unitPrice,
 } from "@/lib/format";
 import type { PriceReport, Product, Supermarket } from "@/lib/types";
 import ReportPriceModal from "./ReportPriceModal";
 import EditPriceModal from "./EditPriceModal";
 import MergeProductModal from "./MergeProductModal";
+import CameraIcon from "../../../components/CameraIcon";
 import EditProductModal from "../../../components/EditProductModal";
 
 export default function ProductDetailClient({
@@ -120,15 +122,29 @@ export default function ProductDetailClient({
           ← {t("back")}
         </Link>
         <div className="mt-2 flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-800">
-              {product.name}
-            </h1>
-            <p className="mt-1 text-sm text-slate-500">
-              {[product.brand, size, tCat(product.category)]
-                .filter(Boolean)
-                .join(" · ")}
-            </p>
+          <div className="flex items-start gap-3">
+            {productPhotoUrl(product.photo_path) ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={productPhotoUrl(product.photo_path)!}
+                alt=""
+                className="h-20 w-20 shrink-0 rounded-lg border border-slate-200 object-cover"
+              />
+            ) : (
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-300">
+                <CameraIcon className="h-8 w-8" />
+              </div>
+            )}
+            <div>
+              <h1 className="text-2xl font-bold text-slate-800">
+                {product.name}
+              </h1>
+              <p className="mt-1 text-sm text-slate-500">
+                {[product.brand, size, tCat(product.category)]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             {isAdmin && (

@@ -42,6 +42,8 @@
     "sizePlaceholder": "1",
     "unit": "Unidad",
     "sizeHint": "Deja el tamaño en blanco para productos a peso variable (p. ej. uvas a KYD/lb).",
+    "photo": "Foto (opcional)",
+    "addPhoto": "Añadir foto",
     "submit": "Crear producto",
     "saveChanges": "Guardar cambios",
     "duplicateHint": "¿Ya existe? Toca uno para ir a él en vez de crear otro:",

@@ -21,6 +21,11 @@ export function formatDate(iso: string, locale: string) {
   });
 }
 
+export function productPhotoUrl(path: string | null): string | null {
+  if (!path) return null;
+  return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/product-photos/${path}`;
+}
+
 export function formatSize(value: number | null, unit: SizeUnit | null) {
   if (unit == null) return null;
   if (value == null) return null;
